@@ -1,0 +1,496 @@
+<mujoco model="robothandassemby_asm">
+    <compiler angle="radian" eulerseq="XYZ" inertiafromgeom="auto"/>
+    <option timestep="0.002" integrator="implicitfast"/>
+    <default>
+        <!-- Applies to every joint in the model unless overridden.
+             Tuned to a real 2g micro servo's internal gear-train behaviour,
+             based on datasheets for several commercial 2g servos
+             (e.g. RCT-2502, DM-S0020, KM-02D, DS-M005):
+               - stall torque  ~0.1-0.35 kgf.cm -> median ~0.25 kgf.cm = 0.0245 N.m
+               - no-load speed ~0.06-0.09 s/60deg -> median ~0.08s -> ~13 rad/s
+               - throw: 180deg total (+/-90deg) is the standard hobby-servo convention
+             damping    (viscous, "kv"): derived, not guessed - a brushed DC
+                                          motor's torque falls off ~linearly
+                                          from stall torque at 0 speed to 0
+                                          torque at no-load speed, so
+                                          b = T_stall / w_max
+                                            = 0.0245 N.m / 13.09 rad/s
+                                            = 0.00187 N.m.s/rad
+             frictionloss (coulomb, "kc"): ~2% of stall torque - static
+                                          breakaway stiction only. Kept small
+                                          since damping above already accounts
+                                          for the full torque-speed falloff -
+                                          a larger coulomb term here would
+                                          double-count and undersize the motor.
+             armature: reflected rotor+gearbox inertia for a coreless motor behind
+                       a ~200:1 gear train - order-of-magnitude estimate, no public
+                       datasheet gives this for generic "2g servo" parts.
+             range: +/-90deg (180deg total), the standard micro-servo throw.
+             If you know your exact servo model, replace these with its real
+             datasheet numbers - these are representative, not model-specific. -->
+        <joint damping="0.00187" armature="0.00001" frictionloss="0.0005" limited="true" range="-1.5708 1.5708"/>
+        <!-- PETG solid density ~1.27 g/cm^3 = 1270 kg/m^3. Applies to every geom
+             that does NOT have an explicit <inertial> in its body - i.e. every
+             3D-printed part (base_link, SERVOARM*, NEWJOINT*, NEWNEWTHUMB*...).
+             190.5 = 1270 * 0.15, i.e. this is already set correctly for 15%
+             infill. The "2GMOTOR" bodies (the actual servo hardware, not
+             printed) keep their own explicit <inertial> instead, so this
+             density doesn't apply to them - see their mass=0.002 (2g) below.
+             If your infill fraction changes, scale this linearly
+             (density = 1270 * infill_fraction). -->
+        <geom density="190.5"/>
+    </default>
+    <asset>
+        <mesh name="SERVOARM_13" file="meshes/SERVOARM_13.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="SERVOARM_16" file="meshes/SERVOARM_16.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__2GMOTOR_1" file="meshes/IndexFinger_1__2GMOTOR_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__NEWJOINTWITHSMALLBEARING_AF0_1" file="meshes/IndexFinger_1__NEWJOINTWITHSMALLBEARING_AF0_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__NEWJOINTWITHSMALLBEARING_1" file="meshes/IndexFinger_1__NEWJOINTWITHSMALLBEARING_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_1" file="meshes/IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__NEWNEWTHUMB_1" file="meshes/IndexFinger_1__NEWNEWTHUMB_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__NEWNEWTHUMBOTHERHALF_1" file="meshes/IndexFinger_1__NEWNEWTHUMBOTHERHALF_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__NEWJOINTADDUCTOR_AF0_1" file="meshes/IndexFinger_1__NEWJOINTADDUCTOR_AF0_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__SERVOARM_1" file="meshes/IndexFinger_1__SERVOARM_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__2GMOTOR_2" file="meshes/IndexFinger_1__2GMOTOR_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__SERVOARM_2" file="meshes/IndexFinger_1__SERVOARM_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__SERVOARM_3" file="meshes/IndexFinger_1__SERVOARM_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__2GMOTOR_3" file="meshes/IndexFinger_1__2GMOTOR_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_2" file="meshes/IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="IndexFinger_1__2GMOTOR_4" file="meshes/IndexFinger_1__2GMOTOR_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__2GMOTOR_5" file="meshes/MiddleFinger_1__2GMOTOR_5.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__NEWJOINTWITHSMALLBEARING_AF0_2" file="meshes/MiddleFinger_1__NEWJOINTWITHSMALLBEARING_AF0_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__SERVOARM_4" file="meshes/MiddleFinger_1__SERVOARM_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__2GMOTOR_6" file="meshes/MiddleFinger_1__2GMOTOR_6.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__SERVOARM_5" file="meshes/MiddleFinger_1__SERVOARM_5.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__NEWJOINTWITHSMALLBEARING_2" file="meshes/MiddleFinger_1__NEWJOINTWITHSMALLBEARING_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_3" file="meshes/MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__SERVOARM_6" file="meshes/MiddleFinger_1__SERVOARM_6.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__2GMOTOR_7" file="meshes/MiddleFinger_1__2GMOTOR_7.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_4" file="meshes/MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__NEWNEWTHUMB_2" file="meshes/MiddleFinger_1__NEWNEWTHUMB_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__NEWNEWTHUMBOTHERHALF_2" file="meshes/MiddleFinger_1__NEWNEWTHUMBOTHERHALF_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__NEWJOINTADDUCTOR_AF0_2" file="meshes/MiddleFinger_1__NEWJOINTADDUCTOR_AF0_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="MiddleFinger_1__2GMOTOR_8" file="meshes/MiddleFinger_1__2GMOTOR_8.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__2GMOTOR_9" file="meshes/PinkyFinger_1__2GMOTOR_9.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__NEWJOINTWITHSMALLBEARING_AF0_3" file="meshes/PinkyFinger_1__NEWJOINTWITHSMALLBEARING_AF0_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__SERVOARM_7" file="meshes/PinkyFinger_1__SERVOARM_7.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__2GMOTOR_10" file="meshes/PinkyFinger_1__2GMOTOR_10.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__SERVOARM_8" file="meshes/PinkyFinger_1__SERVOARM_8.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__NEWJOINTWITHSMALLBEARING_3" file="meshes/PinkyFinger_1__NEWJOINTWITHSMALLBEARING_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_5" file="meshes/PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_5.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__SERVOARM_9" file="meshes/PinkyFinger_1__SERVOARM_9.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__2GMOTOR_11" file="meshes/PinkyFinger_1__2GMOTOR_11.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_6" file="meshes/PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_6.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__NEWNEWTHUMB_3" file="meshes/PinkyFinger_1__NEWNEWTHUMB_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__NEWNEWTHUMBOTHERHALF_3" file="meshes/PinkyFinger_1__NEWNEWTHUMBOTHERHALF_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__NEWJOINTADDUCTOR_AF0_3" file="meshes/PinkyFinger_1__NEWJOINTADDUCTOR_AF0_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="PinkyFinger_1__2GMOTOR_12" file="meshes/PinkyFinger_1__2GMOTOR_12.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__2GMOTOR_13" file="meshes/ThumbFinger_1__2GMOTOR_13.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__NEWJOINTWITHSMALLBEARING_AF0_4" file="meshes/ThumbFinger_1__NEWJOINTWITHSMALLBEARING_AF0_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__SERVOARM_10" file="meshes/ThumbFinger_1__SERVOARM_10.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__2GMOTOR_14" file="meshes/ThumbFinger_1__2GMOTOR_14.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__SERVOARM_11" file="meshes/ThumbFinger_1__SERVOARM_11.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__NEWJOINTWITHSMALLBEARING_4" file="meshes/ThumbFinger_1__NEWJOINTWITHSMALLBEARING_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_7" file="meshes/ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_7.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__SERVOARM_12" file="meshes/ThumbFinger_1__SERVOARM_12.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__2GMOTOR_15" file="meshes/ThumbFinger_1__2GMOTOR_15.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_8" file="meshes/ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_8.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__NEWNEWTHUMB_4" file="meshes/ThumbFinger_1__NEWNEWTHUMB_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__NEWNEWTHUMBOTHERHALF_4" file="meshes/ThumbFinger_1__NEWNEWTHUMBOTHERHALF_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__NEWJOINTADDUCTOR_AF0_4" file="meshes/ThumbFinger_1__NEWJOINTADDUCTOR_AF0_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="ThumbFinger_1__2GMOTOR_16" file="meshes/ThumbFinger_1__2GMOTOR_16.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="SERVOARM_14" file="meshes/SERVOARM_14.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="SERVOARM_15" file="meshes/SERVOARM_15.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="base_link" file="meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </asset>
+    <worldbody>
+        <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1"/>
+        <!-- Ground plane so the hand has something to crawl on. friction is
+             (sliding, torsional, rolling) - a fairly grippy default; lower
+             the first value if the fingertips seem to grip too well vs. how
+             your real PETG fingertips would slide. -->
+        <geom name="floor" type="plane" size="0 0 0.05" pos="0 0 0" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="0.3 0.3 0.35 1"/>
+        <!-- Raised 0.05m above the floor and given a freejoint so the whole
+             hand can actually translate/rotate through space instead of
+             being welded to the world - required for locomotion. Adjust
+             this z once you've checked in the viewer that nothing clips
+             through the floor at your real link dimensions. -->
+        <body name="base_link" pos="0.0 0.0 0.05" euler="1.5707963267948966 0.0 -1.5707963267948966">
+            <!-- Verified via forward kinematics (not a guess): in base_link's own
+                 CAD frame the palm plate's normal is the local Y axis, with the
+                 palmar/grasping face on -Y (fingertips at rest sit at y ~ -0.018
+                 to -0.026 while the palm plate itself is at y ~ 0). This euler
+                 (90, 0, -90) rotates local -Y -> world -Z (down) and local -Z,
+                 the fingers' length axis, -> world +X, so at qpos=0 the palm
+                 back faces up (+Z) and all four fingertips sit below it at a
+                 lower world z, reaching toward the floor, with the hand's
+                 "forward" pointing along +X. Previously with euler="-1.5708 0 0"
+                 the fingertips ended up ABOVE the palm plate (z ~0.069-0.076
+                 vs palm at 0.05) - that was the palm-up bug. -->
+            <freejoint name="root"/>
+            <geom name="base_link_geom" type="mesh" mesh="base_link" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+            <!-- Collision-only proxy for the palm. Only the fingertips had
+                 collision before, so the palm itself could sink straight
+                 through the floor. This box size/pos is a rough guess -
+                 open the viewer, toggle collision geoms on, and resize/
+                 reposition until this box roughly matches the real palm's
+                 footprint and thickness. -->
+            <geom name="base_link_collision" type="box" size="0.03 0.02 0.005" pos="0 0 0" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="1 0 0 0.3"/>
+            <!-- IMU: sits at the base_link origin, axes = base_link's CAD frame
+                 (local +Y = palm-back normal / up at rest, local -Z = fingers'
+                 length axis / forward). Mount the real IMU with the same axes,
+                 or rotate its output into this frame in software. -->
+            <site name="imu" pos="0 0 0" size="0.004" rgba="0 0 1 1"/>
+            <body name="SERVOARM_16" pos="0.02574566929702999 0.0030000000000000027 0.024011939836700007" euler="4.3272247763857685e-17 -0.8544913677075037 3.141592653589793">
+                <geom name="SERVOARM_16_geom" type="mesh" mesh="SERVOARM_16" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                <body name="ThumbFinger_1__2GMOTOR_16" pos="0.005818113129133946 0.021800000000003834 0.0013604446393001624" euler="3.141592653589792 -1.0151002923144457 1.4979501912172812e-15">
+                    <joint name="Revolute-2" type="hinge" axis="7.902207534586689e-16 -1.0 -6.570265165262157e-17" pos="-0.004224845153680452 0.017550000000003826 -0.0042252983398997235"/>
+                    <geom name="ThumbFinger_1__2GMOTOR_16_geom" type="mesh" mesh="ThumbFinger_1__2GMOTOR_16" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                    <inertial mass="0.002" pos="-0.004225010131984328 0.008436231642543496 -0.007919037842701405" fullinertia="9.245373295584409e-08 5.727032948920121e-08 5.8247888509360686e-08 -1.709476890855293e-13 1.6045669836583924e-13 -5.864108657811086e-09"/>
+                    <body name="ThumbFinger_1__NEWJOINTADDUCTOR_AF0_4" pos="0.01315000004972001 0.004899999999999967 -0.025300000000000954" euler="1.5707963267948966 -0.0 -1.5707963267948966">
+                        <geom name="ThumbFinger_1__NEWJOINTADDUCTOR_AF0_4_geom" type="mesh" mesh="ThumbFinger_1__NEWJOINTADDUCTOR_AF0_4" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                        <body name="ThumbFinger_1__SERVOARM_11" pos="-5.702261026845346e-06 -0.0034124999999999963 0.0025000000000000087" euler="1.5707963267948966 -5.551115123125783e-17 1.570788218933696">
+                            <geom name="ThumbFinger_1__SERVOARM_11_geom" type="mesh" mesh="ThumbFinger_1__SERVOARM_11" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                            <body name="ThumbFinger_1__2GMOTOR_13" pos="0.0042197337055433475 0.021550000000000003 0.004230259738396846" euler="0.0 -1.5695506421113754 3.141592653589793">
+                <!-- Collision capsule for the thumb_seg1 segment - without this,
+                     adjacent fingers (e.g. Index/Middle) can pass through each
+                     other along this part of the finger. fromto is a rough guess
+                     at the segment length/direction - adjust in the viewer if it
+                     doesn't visually line up with the mesh. -->
+                <geom name="thumb_seg1_collision" type="capsule" fromto="0 0 0 0 0.018 0" size="0.0035" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="1 0 0 0.3"/>
+                                <joint name="ThumbJoint1" type="hinge" axis="2.3033596270550724e-10 -1.0000001535124714 -1.8371065674260834e-07" pos="-0.0042252983636405245 0.01755013515262632 -0.004224501967727648"/>
+                                <geom name="ThumbFinger_1__2GMOTOR_13_geom" type="mesh" mesh="ThumbFinger_1__2GMOTOR_13" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                <inertial mass="0.002" pos="-0.004225010131984328 0.008436231642543496 -0.007919037842701402" fullinertia="9.245373295584454e-08 5.727032948920214e-08 5.824788850936098e-08 -1.709476891271803e-13 1.604566981885815e-13 -5.864108657810597e-09"/>
+                                <body name="ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_7" pos="0.08179435232458003 0.011900000000000013 -0.09824618557686002" euler="3.141592653589793 1.6263032587282567e-19 -3.141592653589793">
+                                    <geom name="ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_7_geom" type="mesh" mesh="ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_7" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                </body>
+                                <body name="ThumbFinger_1__NEWJOINTWITHSMALLBEARING_AF0_4" pos="-0.004199999999999997 -0.008689790213552 -0.025299999999999993" euler="1.5707963267948966 1.6263032587282567e-19 -3.141592653589793">
+                                    <geom name="ThumbFinger_1__NEWJOINTWITHSMALLBEARING_AF0_4_geom" type="mesh" mesh="ThumbFinger_1__NEWJOINTWITHSMALLBEARING_AF0_4" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                    <body name="ThumbFinger_1__SERVOARM_10" pos="-5.7022610270007765e-06 -0.0034124999999999963 0.002499999999999998" euler="1.5707963267948966 5.551115123125783e-17 1.5707882189336961">
+                                        <geom name="ThumbFinger_1__SERVOARM_10_geom" type="mesh" mesh="ThumbFinger_1__SERVOARM_10" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                        <body name="ThumbFinger_1__2GMOTOR_14" pos="0.004223086643938574 0.021800000000002012 0.0042269124899595905" euler="-2.3946359344512044e-16 -1.5703435639369066 -3.141592653589793">
+                <!-- Collision capsule for the thumb_seg2 segment - without this,
+                     adjacent fingers (e.g. Index/Middle) can pass through each
+                     other along this part of the finger. fromto is a rough guess
+                     at the segment length/direction - adjust in the viewer if it
+                     doesn't visually line up with the mesh. -->
+                <geom name="thumb_seg2_collision" type="capsule" fromto="0 0 0 0 0.018 0" size="0.0035" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="1 0 0 0.3"/>
+                                            <joint name="ThumbJoint2" type="hinge" axis="1.4566907868742568e-10 -1.0000001535124714 1.8371074334000426e-07" pos="-0.004224702467399278 0.017550047209108695 -0.004225260391160414"/>
+                                            <geom name="ThumbFinger_1__2GMOTOR_14_geom" type="mesh" mesh="ThumbFinger_1__2GMOTOR_14" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                            <inertial mass="0.002" pos="-0.0042250101319843275 0.008436231642543498 -0.007919037842701402" fullinertia="9.245373295584441e-08 5.727032948920115e-08 5.824788850936064e-08 -1.7094768913401659e-13 1.604566981392113e-13 -5.864108657810842e-09"/>
+                                            <body name="ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_8" pos="0.08179435232458214 0.011900000000002006 -0.09824618557686701" euler="3.141592653589793 4.0657581468206416e-20 3.141592653589793">
+                                                <geom name="ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_8_geom" type="mesh" mesh="ThumbFinger_1__NEWJOINTOTHERSIDETHOUGH_8" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                            </body>
+                                            <body name="ThumbFinger_1__NEWJOINTWITHSMALLBEARING_4" pos="-0.004249999999999536 -0.008689790213549991 -0.025150000000000068" euler="1.5707963267948966 4.0657581468206416e-20 3.141592653589793">
+                                                <geom name="ThumbFinger_1__NEWJOINTWITHSMALLBEARING_4_geom" type="mesh" mesh="ThumbFinger_1__NEWJOINTWITHSMALLBEARING_4" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                <body name="ThumbFinger_1__SERVOARM_12" pos="-5.702261026143685e-06 -0.0034124999999955107 0.0025000000000000087" euler="1.5707963267948966 -0.0 1.5707882189336955">
+                                                    <geom name="ThumbFinger_1__SERVOARM_12_geom" type="mesh" mesh="ThumbFinger_1__SERVOARM_12" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                    <body name="ThumbFinger_1__2GMOTOR_15" pos="0.0020182606175866624 0.021800000000000087 0.005623866470629173" euler="0.0 -1.1299567564567055 3.141592653589793">
+                <!-- Small collision-only sphere approximating the thumb_tip contact point.
+                     pos is a rough guess at the fingertip offset - nudge it in the viewer
+                     until it visually sits at the actual fingertip mesh surface. -->
+                <!-- Was a lone sphere at "0 0.02 0" - that landed on the last
+                     JOINT, not the fingertip, so the whole distal phalanx had
+                     zero collision and punched through the floor on a curl.
+                     Replaced with a capsule spanning joint->tip, computed
+                     from the actual mesh geometry (find_fingertips.py). -->
+                <!-- Shaft: kept ONLY to stop the phalanx from clipping through
+                     the floor mid-curl. Friction dropped to near-zero so
+                     grazing it doesn't drag/anchor the finger during its
+                     lift/swing phase - that full-length high friction was
+                     why only one finger could provide propulsion while the
+                     rest got stuck bound to the floor. -->
+                <geom name="thumb_distal_collision" type="capsule" size="0.004" fromto="-0.00423 0.01755 -0.00423 -0.00346 0.00128 -0.02403" contype="1" conaffinity="1" friction="0.05 0.001 0.0001" rgba="1 0 0 0.15"/>
+                <!-- Grip: the actual push-off contact, concentrated at the
+                     exact fingertip (same point as the capsule's distal
+                     end). High friction so THIS is where propulsion comes
+                     from, not the shaft. -->
+                <geom name="thumb_tip_grip" type="sphere" size="0.0045" pos="-0.00346 0.00128 -0.02403" contype="1" conaffinity="1" friction="1.2 0.01 0.0001" rgba="0 1 0 0.6"/>
+                                                        <joint name="ThumbJoint3" type="hinge" axis="7.852226410753893e-08 -1.0000001535124714 -1.6608405245532865e-07" pos="-0.00422529783363193 0.017549829284437404 -0.0042250666365073195"/>
+                                                        <geom name="ThumbFinger_1__2GMOTOR_15_geom" type="mesh" mesh="ThumbFinger_1__2GMOTOR_15" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        <inertial mass="0.002" pos="-0.004225010131984332 0.008436231642543496 -0.007919037842701395" fullinertia="9.245373295584653e-08 5.727032948919833e-08 5.824788850936149e-08 -1.7094768880265078e-13 1.6045670013531847e-13 -5.864108657811955e-09"/>
+                                                        <body name="ThumbFinger_1__NEWNEWTHUMBOTHERHALF_4" pos="0.0817943523245662 0.011900000000000079 -0.09824618557683394" euler="-3.141592653589793 -6.93889390390723e-18 -3.141592653589793">
+                                                            <geom name="ThumbFinger_1__NEWNEWTHUMBOTHERHALF_4_geom" type="mesh" mesh="ThumbFinger_1__NEWNEWTHUMBOTHERHALF_4" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        </body>
+                                                        <body name="ThumbFinger_1__NEWNEWTHUMB_4" pos="-0.00425000000000872 -0.008689790213551913 -0.02529999999999406" euler="1.5707963267948968 -6.93889390390723e-18 -3.141592653589793">
+                                                            <geom name="ThumbFinger_1__NEWNEWTHUMB_4_geom" type="mesh" mesh="ThumbFinger_1__NEWNEWTHUMB_4" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        </body>
+                                                    </body>
+                                                </body>
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+            <body name="SERVOARM_13" pos="0.035000000316829996 0.0030000000000000005 -0.025861383362910006" euler="-3.141592653589793 -1.5707961972535207 0">
+                <geom name="SERVOARM_13_geom" type="mesh" mesh="SERVOARM_13" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                <body name="IndexFinger_1__2GMOTOR_4" pos="0.004666233703424872 0.02180000000000379 0.003731958336459309" euler="3.1415926535897674 -1.4600046763057428 2.6923635905684016e-14">
+                    <joint name="Revolute-4" type="hinge" axis="2.9768153628538465e-15 -1.0000000000000002 1.0555063190303789e-15" pos="-0.0042249579282757285 0.017550000000003778 -0.004224618952506082"/>
+                    <geom name="IndexFinger_1__2GMOTOR_4_geom" type="mesh" mesh="IndexFinger_1__2GMOTOR_4" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                    <inertial mass="0.002" pos="-0.004225010131984369 0.0084362316425435 -0.00791903784270149" fullinertia="9.245373295584715e-08 5.727032948919971e-08 5.824788850936393e-08 -1.709476891328653e-13 1.6045669803367318e-13 -5.8641086578110495e-09"/>
+                    <body name="IndexFinger_1__NEWJOINTADDUCTOR_AF0_1" pos="0.013150000049720018 0.0048999999999998775 -0.025300000000000905" euler="1.5707963267948966 2.4214564144086696e-16 -1.5707963267948966">
+                        <geom name="IndexFinger_1__NEWJOINTADDUCTOR_AF0_1_geom" type="mesh" mesh="IndexFinger_1__NEWJOINTADDUCTOR_AF0_1" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                        <body name="IndexFinger_1__SERVOARM_2" pos="-5.702261026883093e-06 -0.003412499999999987 0.0024999999999999467" euler="1.5707963267948966 -1.1102230246251568e-16 1.570788218933696">
+                            <geom name="IndexFinger_1__SERVOARM_2_geom" type="mesh" mesh="IndexFinger_1__SERVOARM_2" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                            <body name="IndexFinger_1__2GMOTOR_1" pos="0.004410995689871146 0.02155000000000002 0.004030430128899176" euler="-3.141592653589792 -1.5257437430445469 1.093895461012362e-14">
+                <!-- Collision capsule for the index_seg1 segment - without this,
+                     adjacent fingers (e.g. Index/Middle) can pass through each
+                     other along this part of the finger. fromto is a rough guess
+                     at the segment length/direction - adjust in the viewer if it
+                     doesn't visually line up with the mesh. -->
+                <geom name="index_seg1_collision" type="capsule" fromto="0 0 0 0 0.018 0" size="0.0035" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="1 0 0 0.3"/>
+                                <joint name="IndexJoint1" type="hinge" axis="-1.234407496445572e-08 1.0000001041929618 -2.7385647853594985e-07" pos="-0.004225309187923169 0.01779971104584663 -0.004225247291005348"/>
+                                <geom name="IndexFinger_1__2GMOTOR_1_geom" type="mesh" mesh="IndexFinger_1__2GMOTOR_1" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                <inertial mass="0.002" pos="-0.004225010131984371 0.008436231642543566 -0.00791903784270155" fullinertia="9.245373295584564e-08 5.727032948920016e-08 5.824788850936537e-08 -1.7094768925023354e-13 1.6045669788953946e-13 -5.86410865780963e-09"/>
+                                <body name="IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_1" pos="0.08179435232457992 0.011899999999999964 -0.09824618557685996" euler="-3.141592653589793 2.1510571102112413e-16 -3.141592653589793">
+                                    <geom name="IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_1_geom" type="mesh" mesh="IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_1" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                </body>
+                                <body name="IndexFinger_1__NEWJOINTWITHSMALLBEARING_AF0_1" pos="-0.004200000000000004 -0.008689790213552007 -0.025299999999999993" euler="1.5707963267948968 -2.7061686225238186e-16 -3.141592653589793">
+                                    <geom name="IndexFinger_1__NEWJOINTWITHSMALLBEARING_AF0_1_geom" type="mesh" mesh="IndexFinger_1__NEWJOINTWITHSMALLBEARING_AF0_1" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                    <body name="IndexFinger_1__SERVOARM_1" pos="-5.702261026996336e-06 -0.003412499999999934 0.0024999999999999888" euler="1.5707963267948968 -5.55111512312578e-17 1.5707882189336964">
+                                        <geom name="IndexFinger_1__SERVOARM_1_geom" type="mesh" mesh="IndexFinger_1__SERVOARM_1" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                        <body name="IndexFinger_1__2GMOTOR_2" pos="0.00328954159257834 0.021800000000001898 0.004988002216387681" euler="3.6679247053346974e-16 -1.3684163953152233 3.1415926535897922">
+                <!-- Collision capsule for the index_seg2 segment - without this,
+                     adjacent fingers (e.g. Index/Middle) can pass through each
+                     other along this part of the finger. fromto is a rough guess
+                     at the segment length/direction - adjust in the viewer if it
+                     doesn't visually line up with the mesh. -->
+                <geom name="index_seg2_collision" type="capsule" fromto="0 0 0 0 0.018 0" size="0.0035" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="1 0 0 0.3"/>
+                                            <joint name="IndexJoint2" type="hinge" axis="-6.713979600059261e-08 1.0000001041929576 2.657856198323705e-07" pos="-0.004225401014771838 0.017799577506453036 -0.004224953890811601"/>
+                                            <geom name="IndexFinger_1__2GMOTOR_2_geom" type="mesh" mesh="IndexFinger_1__2GMOTOR_2" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                            <inertial mass="0.002" pos="-0.0042250101319843275 0.008436231642543509 -0.007919037842701404" fullinertia="9.245373295583983e-08 5.72703294891999e-08 5.824788850935981e-08 -1.7094768886154807e-13 1.604566975317659e-13 -5.8641086578113704e-09"/>
+                                            <body name="IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_2" pos="0.0817943523245813 0.011900000000000967 -0.09824618557686736" euler="-3.1415926535897896 -2.3869795029441027e-15 3.141592653589793">
+                                                <geom name="IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_2_geom" type="mesh" mesh="IndexFinger_1__NEWJOINTOTHERSIDETHOUGH_2" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                            </body>
+                                            <body name="IndexFinger_1__NEWJOINTWITHSMALLBEARING_1" pos="-0.004249999999999583 -0.008689790213550054 -0.0251500000000002" euler="1.5707963267948974 -1.332267629550183e-15 -3.141592653589793">
+                                                <geom name="IndexFinger_1__NEWJOINTWITHSMALLBEARING_1_geom" type="mesh" mesh="IndexFinger_1__NEWJOINTWITHSMALLBEARING_1" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                <body name="IndexFinger_1__SERVOARM_3" pos="-5.7022610261719954e-06 -0.0034124999999955463 0.002500000000000018" euler="1.5707963267948966 3.0531133177191765e-16 1.5707882189336961">
+                                                    <geom name="IndexFinger_1__SERVOARM_3_geom" type="mesh" mesh="IndexFinger_1__SERVOARM_3" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                    <body name="IndexFinger_1__2GMOTOR_3" pos="0.001964799527499537 0.02179999999999982 0.005642766415221096" euler="-7.970932756861808e-17 -1.1204666648908517 -3.1415926535897922">
+                <!-- Small collision-only sphere approximating the index_tip contact point.
+                     pos is a rough guess at the fingertip offset - nudge it in the viewer
+                     until it visually sits at the actual fingertip mesh surface. -->
+                <!-- Was a lone sphere at "0 0.02 0" - see thumb comment above
+                     for why. Replaced with a joint->tip capsule. -->
+                <!-- Shaft: see thumb comment above for rationale. -->
+                <geom name="index_distal_collision" type="capsule" size="0.004" fromto="-0.00422 0.01755 -0.00423 -0.00346 0.00128 -0.02403" contype="1" conaffinity="1" friction="0.05 0.001 0.0001" rgba="1 0 0 0.15"/>
+                <!-- Grip: see thumb comment above. -->
+                <geom name="index_tip_grip" type="sphere" size="0.0045" pos="-0.00346 0.00128 -0.02403" contype="1" conaffinity="1" friction="1.2 0.01 0.0001" rgba="0 1 0 0.6"/>
+                                                        <joint name="IndexJoint3" type="hinge" axis="-5.524244765103825e-08 -1.000000104192962 2.6851074427791666e-07" pos="-0.004224872796024126 0.01755018529384983 -0.004225434521427448"/>
+                                                        <geom name="IndexFinger_1__2GMOTOR_3_geom" type="mesh" mesh="IndexFinger_1__2GMOTOR_3" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        <inertial mass="0.002" pos="-0.004225010131984362 0.008436231642543578 -0.007919037842701555" fullinertia="9.245373295584076e-08 5.727032948920171e-08 5.824788850936549e-08 -1.7094768919590902e-13 1.60456698216584e-13 -5.864108657811388e-09"/>
+                                                        <body name="IndexFinger_1__NEWNEWTHUMBOTHERHALF_1" pos="0.0817943523245856 0.011899999999999845 -0.09824618557687974" euler="-3.141592653589793 2.220446049250313e-16 -3.141592653589793">
+                                                            <geom name="IndexFinger_1__NEWNEWTHUMBOTHERHALF_1_geom" type="mesh" mesh="IndexFinger_1__NEWNEWTHUMBOTHERHALF_1" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        </body>
+                                                        <body name="IndexFinger_1__NEWNEWTHUMB_1" pos="-0.0042500000000003 -0.008689790213552097 -0.025300000000000225" euler="1.5707963267948966 8.326672684688681e-17 3.141592653589793">
+                                                            <geom name="IndexFinger_1__NEWNEWTHUMB_1_geom" type="mesh" mesh="IndexFinger_1__NEWNEWTHUMB_1" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        </body>
+                                                    </body>
+                                                </body>
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+            <body name="SERVOARM_14" pos="1.179573274849e-16 0.0030000000000000005 -0.02585796917344" euler="-3.141592653589793 -1.570796326794881 0">
+                <geom name="SERVOARM_14_geom" type="mesh" mesh="SERVOARM_14" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                <body name="MiddleFinger_1__2GMOTOR_8" pos="0.004144420168574397 0.02180000000000381 0.004304071498752358" euler="2.351544206933126e-14 -1.5519015539952496 3.1415926535897696">
+                    <joint name="Revolute-6" type="hinge" axis="4.441705250156622e-16 -1.0 1.0625181290357943e-17" pos="-0.0042249994175782195 0.017550000000003802 -0.004225030821060082"/>
+                    <geom name="MiddleFinger_1__2GMOTOR_8_geom" type="mesh" mesh="MiddleFinger_1__2GMOTOR_8" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                    <inertial mass="0.002" pos="-0.0042250101319843275 0.008436231642543498 -0.0079190378427014" fullinertia="9.245373295584375e-08 5.727032948920196e-08 5.8247888509360606e-08 -1.709476890830283e-13 1.6045669822463207e-13 -5.8641086578110255e-09"/>
+                    <body name="MiddleFinger_1__NEWJOINTADDUCTOR_AF0_2" pos="0.013150000049720006 0.00489999999999994 -0.025300000000000985" euler="1.5707963267948966 -3.851859888774472e-34 -1.5707963267948966">
+                        <geom name="MiddleFinger_1__NEWJOINTADDUCTOR_AF0_2_geom" type="mesh" mesh="MiddleFinger_1__NEWJOINTADDUCTOR_AF0_2" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                        <body name="MiddleFinger_1__SERVOARM_5" pos="-5.702261026829803e-06 -0.0034124999999999963 0.0025000000000000022" euler="1.5707963267948966 -3.469446951953614e-18 1.570788218933696">
+                            <geom name="MiddleFinger_1__SERVOARM_5_geom" type="mesh" mesh="MiddleFinger_1__SERVOARM_5" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                            <body name="MiddleFinger_1__2GMOTOR_5" pos="0.004219733705543378 0.021550000000000003 0.004230259738396825" euler="-2.1249186730499946e-20 -1.5695506421113805 3.141592653589793">
+                <!-- Collision capsule for the middle_seg1 segment - without this,
+                     adjacent fingers (e.g. Index/Middle) can pass through each
+                     other along this part of the finger. fromto is a rough guess
+                     at the segment length/direction - adjust in the viewer if it
+                     doesn't visually line up with the mesh. -->
+                <geom name="middle_seg1_collision" type="capsule" fromto="0 0 0 0 0.018 0" size="0.0035" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="1 0 0 0.3"/>
+                                <joint name="MiddleJoint1" type="hinge" axis="-4.5239959611050214e-10 -0.9999995076383137 3.608250863582074e-07" pos="-0.00422529718590741 0.017549607627082447 -0.004225441303758192"/>
+                                <geom name="MiddleFinger_1__2GMOTOR_5_geom" type="mesh" mesh="MiddleFinger_1__2GMOTOR_5" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                <inertial mass="0.002" pos="-0.004225010131984327 0.0084362316425435 -0.007919037842701402" fullinertia="9.245373295584229e-08 5.727032948920098e-08 5.824788850936058e-08 -1.7094768909430566e-13 1.6045669815153635e-13 -5.864108657810994e-09"/>
+                                <body name="MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_3" pos="0.08179435232458002 0.011900000000000003 -0.09824618557686002" euler="3.141592653589793 -0.0 -3.141592653589793">
+                                    <geom name="MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_3_geom" type="mesh" mesh="MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_3" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                </body>
+                                <body name="MiddleFinger_1__NEWJOINTWITHSMALLBEARING_AF0_2" pos="-0.0042 -0.008689790213552 -0.025300000000000003" euler="1.5707963267948966 -0.0 -3.141592653589793">
+                                    <geom name="MiddleFinger_1__NEWJOINTWITHSMALLBEARING_AF0_2_geom" type="mesh" mesh="MiddleFinger_1__NEWJOINTWITHSMALLBEARING_AF0_2" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                    <body name="MiddleFinger_1__SERVOARM_4" pos="-5.7022610269985564e-06 -0.003412500000000005 0.0025" euler="1.5707963267948966 3.469446951953614e-18 1.5707882189336961">
+                                        <geom name="MiddleFinger_1__SERVOARM_4_geom" type="mesh" mesh="MiddleFinger_1__SERVOARM_4" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                        <body name="MiddleFinger_1__2GMOTOR_6" pos="0.004223086643938583 0.021800000000002005 0.004226912489959591" euler="0.0 -1.5703435639369085 -3.141592653589793">
+                <!-- Collision capsule for the middle_seg2 segment - without this,
+                     adjacent fingers (e.g. Index/Middle) can pass through each
+                     other along this part of the finger. fromto is a rough guess
+                     at the segment length/direction - adjust in the viewer if it
+                     doesn't visually line up with the mesh. -->
+                <geom name="middle_seg2_collision" type="capsule" fromto="0 0 0 0 0.018 0" size="0.0035" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="1 0 0 0.3"/>
+                                            <joint name="MiddleJoint2" type="hinge" axis="2.861058368962033e-10 0.9999995076383137 3.6082525653804987e-07" pos="-0.004224702460007911 0.017800470753172138 -0.0042252510696470565"/>
+                                            <geom name="MiddleFinger_1__2GMOTOR_6_geom" type="mesh" mesh="MiddleFinger_1__2GMOTOR_6" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                            <inertial mass="0.002" pos="-0.004225010131984328 0.008436231642543498 -0.007919037842701412" fullinertia="9.245373295584291e-08 5.727032948919876e-08 5.824788850936067e-08 -1.709476890945736e-13 1.6045669859512937e-13 -5.864108657810944e-09"/>
+                                            <body name="MiddleFinger_1__NEWJOINTWITHSMALLBEARING_2" pos="-0.00424999999999959 -0.008689790213550003 -0.025150000000000068" euler="1.5707963267948966 -0.0 -3.141592653589793">
+                                                <geom name="MiddleFinger_1__NEWJOINTWITHSMALLBEARING_2_geom" type="mesh" mesh="MiddleFinger_1__NEWJOINTWITHSMALLBEARING_2" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                <body name="MiddleFinger_1__SERVOARM_6" pos="-5.702261026139244e-06 -0.0034124999999955463 0.002499999999999998" euler="1.5707963267948966 -3.4694469519536134e-18 1.5707882189336961">
+                                                    <geom name="MiddleFinger_1__SERVOARM_6_geom" type="mesh" mesh="MiddleFinger_1__SERVOARM_6" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                    <body name="MiddleFinger_1__2GMOTOR_7" pos="0.004083502756023965 0.02180000000000004 0.004361909586586934" euler="5.1417045980987224e-20 -1.5378428089795877 3.141592653589793">
+                <!-- Small collision-only sphere approximating the middle_tip contact point.
+                     pos is a rough guess at the fingertip offset - nudge it in the viewer
+                     until it visually sits at the actual fingertip mesh surface. -->
+                <!-- Was a lone sphere at "0 0.02 0" - see thumb comment above
+                     for why. Replaced with a joint->tip capsule. -->
+                <!-- Shaft: see thumb comment above for rationale. -->
+                <geom name="middle_distal_collision" type="capsule" size="0.004" fromto="-0.00423 0.01780 -0.00423 -0.00346 0.00130 -0.02404" contype="1" conaffinity="1" friction="0.05 0.001 0.0001" rgba="1 0 0 0.15"/>
+                <!-- Grip: see thumb comment above. -->
+                <geom name="middle_tip_grip" type="sphere" size="0.0045" pos="-0.00346 0.00130 -0.02404" contype="1" conaffinity="1" friction="1.2 0.01 0.0001" rgba="0 1 0 0.6"/>
+                                                        <joint name="MiddleJoint3" type="hinge" axis="1.2177183953895887e-08 0.9999995076383137 -3.606198327940624e-07" pos="-0.004225284206064358 0.017800134395140103 -0.004225405794397033"/>
+                                                        <geom name="MiddleFinger_1__2GMOTOR_7_geom" type="mesh" mesh="MiddleFinger_1__2GMOTOR_7" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        <inertial mass="0.002" pos="-0.004225010131984328 0.0084362316425435 -0.0079190378427014" fullinertia="9.245373295584804e-08 5.727032948919765e-08 5.824788850936056e-08 -1.7094768908459638e-13 1.6045669783576368e-13 -5.8641086578110784e-09"/>
+                                                        <body name="MiddleFinger_1__NEWNEWTHUMB_2" pos="-0.004249999999999892 -0.00868979021355196 -0.02530000000000026" euler="1.5707963267948966 -0.0 3.141592653589793">
+                                                            <geom name="MiddleFinger_1__NEWNEWTHUMB_2_geom" type="mesh" mesh="MiddleFinger_1__NEWNEWTHUMB_2" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        </body>
+                                                        <body name="MiddleFinger_1__NEWNEWTHUMBOTHERHALF_2" pos="0.08179435232458651 0.01190000000000256 -0.09824618557691941" euler="-3.141592653589789 -2.0740353878778696e-14 -3.141592653589793">
+                                                            <geom name="MiddleFinger_1__NEWNEWTHUMBOTHERHALF_2_geom" type="mesh" mesh="MiddleFinger_1__NEWNEWTHUMBOTHERHALF_2" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        </body>
+                                                    </body>
+                                                </body>
+                                            </body>
+                                            <body name="MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_4" pos="0.08179435232458195 0.011900000000002001 -0.09824618557686723" euler="3.141592653589793 -0.0 -3.141592653589793">
+                                                <geom name="MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_4_geom" type="mesh" mesh="MiddleFinger_1__NEWJOINTOTHERSIDETHOUGH_4" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                        </body>
+                </body>
+            </body>
+            <body name="SERVOARM_15" pos="-0.03500000145758 0.0030000000000000005 -0.025842118173440003" euler="-3.141592653589793 -1.5707957264773502 0">
+                <geom name="SERVOARM_15_geom" type="mesh" mesh="SERVOARM_15" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                <body name="PinkyFinger_1__2GMOTOR_12" pos="0.0038665411128900474 0.021800000000003893 0.0045553386067751726" euler="1.6363475612349713e-15 -1.4891912874373783 3.141592653589792">
+                    <joint name="Revolute-8" type="hinge" axis="1.351471739733524e-16 -1.0000000000000002 -1.57799591129014e-17" pos="-0.004225008180198357 0.017550000000003896 -0.004224882101010688"/>
+                    <geom name="PinkyFinger_1__2GMOTOR_12_geom" type="mesh" mesh="PinkyFinger_1__2GMOTOR_12" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                    <inertial mass="0.002" pos="-0.004225010131984419 0.008436231642543502 -0.00791903784270158" fullinertia="9.245373295585145e-08 5.727032948919899e-08 5.824788850936772e-08 -1.709476892872196e-13 1.6045669810098438e-13 -5.864108657811333e-09"/>
+                    <body name="PinkyFinger_1__NEWJOINTADDUCTOR_AF0_3" pos="0.013150000049720006 0.004900000000000024 -0.025300000000001117" euler="1.5707963267948963 2.4201418955484786e-16 -1.5707963267948966">
+                        <geom name="PinkyFinger_1__NEWJOINTADDUCTOR_AF0_3_geom" type="mesh" mesh="PinkyFinger_1__NEWJOINTADDUCTOR_AF0_3" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                        <body name="PinkyFinger_1__SERVOARM_8" pos="-5.702261026769851e-06 -0.0034124999999999694 0.0025000000000000113" euler="1.5707963267948966 6.245004513516507e-16 1.570788218933695">
+                            <geom name="PinkyFinger_1__SERVOARM_8_geom" type="mesh" mesh="PinkyFinger_1__SERVOARM_8" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                            <body name="PinkyFinger_1__2GMOTOR_9" pos="0.004320205144667577 0.02154999999999996 0.004127599484929303" euler="-3.1415926535897905 -1.5480007834125293 -4.390355000711993e-14">
+                <!-- Collision capsule for the pinky_seg1 segment - without this,
+                     adjacent fingers (e.g. Index/Middle) can pass through each
+                     other along this part of the finger. fromto is a rough guess
+                     at the segment length/direction - adjust in the viewer if it
+                     doesn't visually line up with the mesh. -->
+                <geom name="pinky_seg1_collision" type="capsule" fromto="0 0 0 0 0.018 0" size="0.0035" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="1 0 0 0.3"/>
+                                <joint name="PinkyJoint1" type="hinge" axis="-1.9499728843349468e-09 -0.9999998854044982 -8.555742916915854e-08" pos="-0.004225306131661237 0.017550324503019833 -0.00422536484688658"/>
+                                <geom name="PinkyFinger_1__2GMOTOR_9_geom" type="mesh" mesh="PinkyFinger_1__2GMOTOR_9" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                <inertial mass="0.002" pos="-0.00422501013198444 0.00843623164254366 -0.007919037842701673" fullinertia="9.245373295585273e-08 5.7270329489201045e-08 5.824788850936639e-08 -1.7094768874727454e-13 1.6045669653636525e-13 -5.864108657812211e-09"/>
+                                <body name="PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_5" pos="0.08179435232458004 0.011900000000000022 -0.09824618557686003" euler="3.1415926535897927 5.169475958410887e-16 3.141592653589793">
+                                    <geom name="PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_5_geom" type="mesh" mesh="PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_5" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                </body>
+                                <body name="PinkyFinger_1__NEWJOINTWITHSMALLBEARING_AF0_3" pos="-0.004199999999999993 -0.00868979021355206 -0.025300000000000093" euler="1.5707963267948963 6.487865800153261e-16 -3.141592653589793">
+                                    <geom name="PinkyFinger_1__NEWJOINTWITHSMALLBEARING_AF0_3_geom" type="mesh" mesh="PinkyFinger_1__NEWJOINTWITHSMALLBEARING_AF0_3" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                    <body name="PinkyFinger_1__SERVOARM_7" pos="-5.702261026978572e-06 -0.0034125000000000227 0.0025" euler="1.5707963267948972 -1.6653345369377333e-16 1.5707882189336995">
+                                        <geom name="PinkyFinger_1__SERVOARM_7_geom" type="mesh" mesh="PinkyFinger_1__SERVOARM_7" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                        <body name="PinkyFinger_1__2GMOTOR_10" pos="0.004269948149679843 0.021800000000001898 0.004179568494358401" euler="-3.1415926535897873 -1.560100305651908 -1.5509140565827456e-14">
+                <!-- Collision capsule for the pinky_seg2 segment - without this,
+                     adjacent fingers (e.g. Index/Middle) can pass through each
+                     other along this part of the finger. fromto is a rough guess
+                     at the segment length/direction - adjust in the viewer if it
+                     doesn't visually line up with the mesh. -->
+                <geom name="pinky_seg2_collision" type="capsule" fromto="0 0 0 0 0.018 0" size="0.0035" contype="1" conaffinity="1" friction="1.0 0.005 0.0001" rgba="1 0 0 0.3"/>
+                                            <joint name="PinkyJoint2" type="hinge" axis="-1.035449229830343e-09 -0.9999998854044928 8.557338541936854e-08" pos="-0.0042250470631465566 0.017550239183928333 -0.00422515498471918"/>
+                                            <geom name="PinkyFinger_1__2GMOTOR_10_geom" type="mesh" mesh="PinkyFinger_1__2GMOTOR_10" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                            <inertial mass="0.002" pos="-0.004225010131984385 0.008436231642543543 -0.007919037842701532" fullinertia="9.245373295584761e-08 5.727032948920202e-08 5.824788850936345e-08 -1.7094768871505935e-13 1.6045669875873168e-13 -5.864108657810562e-09"/>
+                                            <body name="PinkyFinger_1__NEWJOINTWITHSMALLBEARING_3" pos="-0.0042499999999995805 -0.008689790213550128 -0.025150000000000478" euler="1.5707963267948952 8.22258927612998e-16 -3.141592653589793">
+                                                <geom name="PinkyFinger_1__NEWJOINTWITHSMALLBEARING_3_geom" type="mesh" mesh="PinkyFinger_1__NEWJOINTWITHSMALLBEARING_3" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                <body name="PinkyFinger_1__SERVOARM_9" pos="-5.702261026157007e-06 -0.003412499999995564 0.0025000000000000243" euler="1.5707963267948968 -1.5265566588595856e-16 1.5707882189336964">
+                                                    <geom name="PinkyFinger_1__SERVOARM_9_geom" type="mesh" mesh="PinkyFinger_1__SERVOARM_9" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                    <body name="PinkyFinger_1__2GMOTOR_11" pos="0.0038194465285134706 0.021799999999999996 0.004594896975533189" euler="-6.048990360526335e-16 -1.478897745131353 3.1415926535897816">
+                <!-- Small collision-only sphere approximating the pinky_tip contact point.
+                     pos is a rough guess at the fingertip offset - nudge it in the viewer
+                     until it visually sits at the actual fingertip mesh surface. -->
+                <!-- Was a lone sphere at "0 0.02 0" - see thumb comment above
+                     for why. Replaced with a joint->tip capsule. -->
+                <!-- Shaft: see thumb comment above for rationale. -->
+                <geom name="pinky_distal_collision" type="capsule" size="0.004" fromto="-0.00422 0.01755 -0.00422 -0.00346 0.00128 -0.02403" contype="1" conaffinity="1" friction="0.05 0.001 0.0001" rgba="1 0 0 0.15"/>
+                <!-- Grip: see thumb comment above. -->
+                <geom name="pinky_tip_grip" type="sphere" size="0.0045" pos="-0.00346 0.00128 -0.02403" contype="1" conaffinity="1" friction="1.2 0.01 0.0001" rgba="0 1 0 0.6"/>
+                                                        <joint name="PinkyJoint3" type="hinge" axis="6.822621010683927e-09 -0.9999998854045008 -8.530725893740598e-08" pos="-0.00422471628544888 0.017549523415543226 -0.004224939045297976"/>
+                                                        <geom name="PinkyFinger_1__2GMOTOR_11_geom" type="mesh" mesh="PinkyFinger_1__2GMOTOR_11" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        <inertial mass="0.002" pos="-0.004225010131984429 0.008436231642543696 -0.007919037842701652" fullinertia="9.245373295585268e-08 5.7270329489200634e-08 5.824788850936715e-08 -1.709476891156112e-13 1.604566968132922e-13 -5.864108657813473e-09"/>
+                                                        <body name="PinkyFinger_1__NEWNEWTHUMBOTHERHALF_3" pos="0.0817943523245855 0.01190000000000007 -0.09824618557686972" euler="3.141592653589793 -2.0816681711721705e-16 3.141592653589793">
+                                                            <geom name="PinkyFinger_1__NEWNEWTHUMBOTHERHALF_3_geom" type="mesh" mesh="PinkyFinger_1__NEWNEWTHUMBOTHERHALF_3" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        </body>
+                                                        <body name="PinkyFinger_1__NEWNEWTHUMB_3" pos="-0.004250000000000322 -0.008689790213551905 -0.025299999999990296" euler="1.5707963267948966 1.2490009027033046e-16 3.141592653589793">
+                                                            <geom name="PinkyFinger_1__NEWNEWTHUMB_3_geom" type="mesh" mesh="PinkyFinger_1__NEWNEWTHUMB_3" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                                        </body>
+                                                    </body>
+                                                </body>
+                                            </body>
+                                            <body name="PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_6" pos="0.08179435232458157 0.011900000000001958 -0.09824618557686687" euler="-3.141592653589793 -1.0408340855860918e-17 -3.141592653589793">
+                                                <geom name="PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_6_geom" type="mesh" mesh="PinkyFinger_1__NEWJOINTOTHERSIDETHOUGH_6" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2"/>
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+
+    <actuator>
+        <!-- One position actuator per joint == a servo holding an angle.
+             TORQUE x8 vs the previous file: forcerange 0.04 -> 0.32 N.m, AND
+             kp 0.05 -> 0.4, kv 0.002 -> 0.016. All three had to scale together:
+             a position actuator outputs kp*(target-q) - kv*qdot, so with
+             kp=0.05 and a max target error of 1.5708 rad the motor could never
+             ask for more than ~0.079 N.m no matter how high forcerange was set.
+             Scaling kp/kv by 8 keeps the same damping ratio and makes the
+             servo genuinely 8x stronger and 8x stiffer.
+             THIS IS A SIM-ONLY VALUE. 0.32 N.m ~ 3.3 kgf.cm: that is a
+             9g-12g metal-gear servo at 6-7.4 V, NOT the 2 g micro servos the
+             mass/inertia in this model assume. Budget for bigger servos (and
+             their mass) before building this on hardware.
+             ctrlrange mirrors the +/-90deg joint range set in <default>. -->
+        <position name="Revolute-2_act" joint="Revolute-2" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="ThumbJoint1_act" joint="ThumbJoint1" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="ThumbJoint2_act" joint="ThumbJoint2" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="ThumbJoint3_act" joint="ThumbJoint3" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+
+
+        <position name="Revolute-4_act" joint="Revolute-4" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="IndexJoint1_act" joint="IndexJoint1" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="IndexJoint2_act" joint="IndexJoint2" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="IndexJoint3_act" joint="IndexJoint3" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+
+        <position name="Revolute-6_act" joint="Revolute-6" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="MiddleJoint1_act" joint="MiddleJoint1" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="MiddleJoint2_act" joint="MiddleJoint2" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="MiddleJoint3_act" joint="MiddleJoint3" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+
+        <position name="Revolute-8_act" joint="Revolute-8" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="PinkyJoint1_act" joint="PinkyJoint1" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="PinkyJoint2_act" joint="PinkyJoint2" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+        <position name="PinkyJoint3_act" joint="PinkyJoint3" kp="0.4" kv="0.016" ctrlrange="-1.5708 1.5708" forcerange="-0.32 0.32"/>
+    </actuator>
+
+    <sensor>
+        <accelerometer name="imu_acc" site="imu"/>
+        <gyro name="imu_gyro" site="imu"/>
+        <framequat name="imu_quat" objtype="site" objname="imu"/>
+    </sensor>
+
+</mujoco>
