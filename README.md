@@ -1,4 +1,4 @@
-<h1 align="center">🤖 16 DOF Direct-Driven Robot Hand 🤖</h1>
+<h1 align="center">🦾 16 DOF Direct-Driven Robot Hand 🦾</h1>
 
 <h3 align="center">
   A robot hand <b>YOU</b> can build at home for less than <b>200 Euros</b>
@@ -35,6 +35,33 @@
 
 ---
 
+## 🎬 See It in Action
+
+Watch the real hand move smoothly from one gesture to the next.
+
+<table align="center">
+  <tr>
+    <td align="center" valign="bottom">
+      <img src="PASTE-PEACE-GIF-LINK-HERE" alt="Peace sign in motion" height="220">
+    </td>
+    <td align="center" valign="bottom">
+      <img src="PASTE-FIST-GIF-LINK-HERE" alt="Fist in motion" height="220">
+    </td>
+    <td align="center" valign="bottom">
+      <img src="PASTE-SPIDERMAN-GIF-LINK-HERE" alt="Spider-Man in motion" height="220">
+    </td>
+    <td align="center" valign="bottom">
+      <img src="PASTE-SPREAD-GIF-LINK-HERE" alt="Spread in motion" height="220">
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>✌️ Peace</b></td>
+    <td align="center"><b>✊ Fist</b></td>
+    <td align="center"><b>🤟 Spider-Man</b></td>
+    <td align="center"><b>🖐️ Spread</b></td>
+  </tr>
+</table>
+
 ## 🎯 Our Goal
 
 **To democratize robotics hardware.**
@@ -63,6 +90,14 @@ python send_gestures_to_hardware.py
 # then type 4 and press Enter to start the crawl gait
 # press Enter again to stop it
 ```
+
+## 🎥 Watch It Crawl
+
+<p align="center">
+  <video src="PASTE-CRAWL-VIDEO-LINK-HERE" width="700" controls muted loop></video>
+</p>
+
+<p align="center"><i>The hand crawling forward on its fingertips with the trot gait.</i></p>
 
 ## 🧭 Two Simulation Models
 
