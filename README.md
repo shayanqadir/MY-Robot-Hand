@@ -12,17 +12,23 @@
 
 <table align="center">
   <tr>
-    <td align="center">
-      <img src="https://github.com/user-attachments/assets/9dafd911-c15f-4b35-9e0f-a643205c650a" alt="Peace sign" width="280"><br>
-      <b>✌️ Peace</b>
+    <td align="center" valign="bottom">
+      <img src="https://github.com/user-attachments/assets/9dafd911-c15f-4b35-9e0f-a643205c650a" alt="Peace sign" height="180">
     </td>
-    <td align="center">
-      <img src="https://github.com/user-attachments/assets/42e9811c-efed-490f-b8b4-cef22572473e" alt="Fist" width="280"><br>
-      <b>✊ Fist</b>
+    <td align="center" valign="bottom">
+      <img src="https://github.com/user-attachments/assets/42e9811c-efed-490f-b8b4-cef22572473e" alt="Fist" height="180">
     </td>
-    <td align="center">
-      <img src="https://github.com/user-attachments/assets/dbe04319-96c1-4ca9-a249-0d234965389e" alt="Spider-Man" width="280"><br>
-      <b>🤟 Spider-Man</b>
+    <td align="center" valign="bottom">
+      <img src="https://github.com/user-attachments/assets/dbe04319-96c1-4ca9-a249-0d234965389e" alt="Spider-Man" height="180">
     </td>
+    <td align="center" valign="bottom">
+      <img src="https://github.com/user-attachments/assets/37bed6a0-0967-4bba-8622-5d14be7b15fd" alt="Spread" height="180">
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>✌️ Peace</b></td>
+    <td align="center"><b>✊ Fist</b></td>
+    <td align="center"><b>🤟 Spider-Man</b></td>
+    <td align="center"><b>🖐️ Spread</b></td>
   </tr>
 </table>
