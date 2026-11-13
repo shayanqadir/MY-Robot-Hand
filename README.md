@@ -98,7 +98,7 @@ The hand comes with two MuJoCo models, depending on what you want to do:
 
 | Item | Description |
 |---|---|
-| [`BOM.md`](My-Robot-Hand.csv) | Full parts list with purchase links |
+| [`BOM.md`](BOM MY Robot Hand.csv) | Full parts list with purchase links |
 | `robothandassembly_fixed.xml` | Simulation model, **upright hand** (gestures) |
 | `robothandassembly_crawl.xml` | Simulation model, **hand facing the floor** (crawling) |
 | `gesture_presets.py` | View and tune gestures in simulation |
