@@ -134,3 +134,27 @@ The hand comes with two MuJoCo models, depending on what you want to do:
 | `send_gestures_to_hardware.py` | Send gestures and the trot gait to the real hand |
 | `pca9685_servo_bridge/` | Microcontroller firmware for driving the servos |
 | `hand_env.py`, `train_ppo.py`, `watch_policy.py`, `run_policy_on_hardware.py`, `sanity_check_model.py` | *Experimental:* reinforcement-learning work on the crawl model. Not used by the trot gait above. |
+
+---
+
+## 🔮 Future Improvements
+
+This project is still growing. Planned upgrades will be added to this repo as they are built.
+
+### 📡 Live joint position feedback
+
+Right now the hand runs **open-loop**: commands go out to the servos, but nothing reads back where the joints actually are. The plan is to read each servo's **internal potentiometer**, and to add an **I²C multiplexer** so that all 16 joints can be read over a single bus.
+
+This would allow:
+
+- **Live joint positions** streamed to the control software
+- **Closed-loop control**, so the hand can check that it reached the pose it was told to reach
+- **A safer crawl gait**, since the gait could react to what the joints are really doing instead of running blind
+
+**Roadmap**
+
+- [ ] Read the internal potentiometer of each servo
+- [ ] Add an I²C multiplexer so all 16 joints can be read over one bus
+- [ ] Stream live joint positions to the control software
+- [ ] Use the feedback for closed-loop control, including the crawl gait
+- [ ] Update the BOM, firmware and instructions for the new parts
