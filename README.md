@@ -168,9 +168,23 @@ This would allow:
 
 ---
 
+## Safety and Disclaimer
+
+This is an experimental hobby and research project. You build and use it **at your own risk**.
+
+- **Moving parts:** the servos are strong enough to pinch fingers and trap loose cables, hair or clothing. Keep hands and objects clear while the hand is powered.
+- **Heat:** servos can get hot during long or heavy use. Let them cool down, and don't touch them right after a long run.
+- **Electrical safety:** use a power supply that matches the servo and driver board ratings in the BOM, check all wiring before powering on, and never leave the hand powered and unattended.
+- **Supervision:** keep it away from young children, and don't run it unattended.
+- **Not for critical use:** the hand is not a medical device and is not meant for any application where a failure could cause harm.
+
+All files, code and instructions in this repository are provided **"as is", without warranty of any kind**. To the extent permitted by law, the author is not liable for any injury, damage or loss arising from building, using or modifying this project.
+
+---
+
 ## License
 
-This project is free for personal, hobby, educational and research use. **Commercial use is not permitted** without written permission.
+This project is free for personal, hobby, educational and research use. You are welcome to build it, modify it and experiment with it. **You may not use it to make a commercial product or to sell hands, parts or designs for profit.**
 
 - **Software** (Python scripts and firmware): [PolyForm Noncommercial 1.0.0](LICENSE)
 - **Hardware** (CAD files, simulation models, BOM and documentation): [CC BY-NC 4.0](LICENSE-HARDWARE)
