@@ -91,7 +91,7 @@ Watch the real hand perform each gesture, and crawl.
 
 This hand isn't just for gestures. Flip it over so the palm faces the floor and the fingers become legs: the hand **crawls forward on its fingertips**.
 
-> ⚠️ **Watch it closely.** The crawl runs open-loop, with no sensor feedback. Even metal-gear servos can overheat under sustained load, so keep an eye on them and keep your hand near the power switch.
+> ⚠️ **Watch it closely.** The crawl runs open-loop, with no sensor feedback. Even metal-gear servos can overheat under sustained load, so only operate the crawling function for short periods of time.
 
 ### Try it
 
