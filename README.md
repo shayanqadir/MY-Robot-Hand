@@ -24,6 +24,7 @@ Everything is built from parts you can order online. There are no custom-machine
 
 - **16 degrees of freedom**: 4 fingers, with 4 independently driven joints each
 - **Direct-driven**: one servo per joint, with no tendons or linkages
+- **Metal-gear servos**: durable, and able to take the load of crawling
 - **Under 200 €** in total, with every part linked in the BOM
 - **Lightweight**: the complete hand weighs just **204 g**
 - **Walks**: the hand crawls forward on its fingertips
@@ -90,7 +91,7 @@ Watch the real hand perform each gesture, and crawl.
 
 This hand isn't just for gestures. Flip it over so the palm faces the floor and the fingers become legs: the hand **crawls forward on its fingertips**.
 
-> ⚠️ **Watch it closely.** The crawl runs open-loop, with no sensor feedback. Small plastic-gear servos can overheat under sustained load, so keep an eye on them and keep your hand near the power switch.
+> ⚠️ **Watch it closely.** The crawl runs open-loop, with no sensor feedback. Even metal-gear servos can overheat under sustained load, so keep an eye on them and keep your hand near the power switch.
 
 ### Try it
 
@@ -129,6 +130,8 @@ The hand comes with two MuJoCo models, depending on what you want to do:
 | `gesture_presets.py` | View and tune gestures in simulation |
 | `send_gestures_to_hardware.py` | Send gestures and the crawl to the real hand |
 | `pca9685_servo_bridge/` | Microcontroller firmware for driving the servos |
+| `LICENSE` | License for the software |
+| `LICENSE-HARDWARE` | License for the hardware designs and documentation |
 
 ---
 
@@ -162,3 +165,14 @@ This would allow:
 - [ ] Stream live joint positions to the control software
 - [ ] Use the feedback for closed-loop control, including the crawl
 - [ ] Update the BOM, firmware and instructions for the new parts
+
+---
+
+## License
+
+This project is free for personal, hobby, educational and research use. **Commercial use is not permitted** without written permission.
+
+- **Software** (Python scripts and firmware): [PolyForm Noncommercial 1.0.0](LICENSE)
+- **Hardware** (CAD files, simulation models, BOM and documentation): [CC BY-NC 4.0](LICENSE-HARDWARE)
+
+If you want to use this project commercially, contact the author through GitHub to ask for permission.
