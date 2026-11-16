@@ -1,4 +1,4 @@
-<h1 align="center">🦾 16 DOF Direct-Driven Robot Hand 🦾</h1>
+<h1 align="center">16 DOF Direct-Driven Robot Hand</h1>
 
 <h3 align="center">
   A robot hand <b>YOU</b> can build at home for less than <b>200 Euros</b>
@@ -8,7 +8,7 @@
   <img src="https://github.com/user-attachments/assets/2e8fef0c-d946-41dc-bf10-3262e02fa41a" alt="Robot hand" width="700">
 </p>
 
-## 🎯 Our Goal
+## Our Goal
 
 **To democratize robotics hardware.**
 
@@ -16,23 +16,23 @@ Capable robot hands cost thousands of euros, which puts them out of reach for mo
 
 Everything is built from parts you can order online. There are no custom-machined components and no special suppliers.
 
-> ### 🛒 Build it yourself
+> ### Build it yourself
 > **Every part is available to buy online, and every part is linked in the [Bill of Materials](BOM%20MY%20Robot%20Hand.csv).**
 > Open the BOM, order the parts, and you have everything you need to build the hand.
 
-## ✨ Highlights
+## Highlights
 
 - **16 degrees of freedom**: 4 fingers, with 4 independently driven joints each
 - **Direct-driven**: one servo per joint, with no tendons or linkages
 - **Under 200 €** in total, with every part linked in the BOM
 - **Lightweight**: the complete hand weighs just **204 g**
-- **Walks**: a hard-coded trot gait that crawls the hand forward on its fingertips
+- **Walks**: the hand crawls forward on its fingertips
 - **Two simulation models**: an upright one for gestures and a floor-facing one for crawling
-- **Control software included**: send gestures and the gait to the real hand over USB serial
+- **Control software included**: send gestures and the crawl to the real hand over USB serial
 
 ---
 
-<h2 align="center">✋ Gestures ✋</h2>
+<h2 align="center">Gestures</h2>
 
 <table align="center">
   <tr>
@@ -57,15 +57,15 @@ Everything is built from parts you can order online. There are no custom-machine
   </tr>
 </table>
 
-### 🎬 Videos
+### Videos
 
 Watch the real hand perform each gesture, and crawl.
 
 <table align="center">
   <tr>
-    <td align="center" width="280"><b>🖐️ Spread</b></td>
-    <td align="center" width="280"><b>🤟 Spider-Man</b></td>
-    <td align="center" width="280"><b>✌️ Peace</b></td>
+    <td align="center" width="280"><b>Spread</b></td>
+    <td align="center" width="280"><b>Spider-Man</b></td>
+    <td align="center" width="280"><b>Peace</b></td>
   </tr>
   <tr>
     <td align="center" valign="middle" width="280" height="280"><video src="https://github.com/user-attachments/assets/2119add0-8ffd-4a32-9deb-a30aa2c67414" controls muted width="260" height="260"></video></td>
@@ -73,9 +73,9 @@ Watch the real hand perform each gesture, and crawl.
     <td align="center" valign="middle" width="280" height="280"><video src="https://github.com/user-attachments/assets/fe2d028e-4e9b-4415-89fd-89c00d137b5e" controls muted width="260" height="260"></video></td>
   </tr>
   <tr>
-    <td align="center" width="280"><b>✊ Fist</b></td>
-    <td align="center" width="280"><b>🔢 Counting</b></td>
-    <td align="center" width="280"><b>🐾 Crawling</b></td>
+    <td align="center" width="280"><b>Fist</b></td>
+    <td align="center" width="280"><b>Counting</b></td>
+    <td align="center" width="280"><b>Crawling</b></td>
   </tr>
   <tr>
     <td align="center" valign="middle" width="280" height="280"><video src="https://github.com/user-attachments/assets/5e618749-12ee-43e7-a32b-99904015908c" controls muted width="260" height="260"></video></td>
@@ -86,35 +86,31 @@ Watch the real hand perform each gesture, and crawl.
 
 ---
 
-## 🐾 It Can Walk!
+## It Can Walk
 
 This hand isn't just for gestures. Flip it over so the palm faces the floor and the fingers become legs: the hand **crawls forward on its fingertips**.
 
-- **Hard-coded trot gait:** the walk is a hand-written oscillator, not a learned policy. The fingers move in diagonal pairs (index + pinky, and middle + thumb), with the two pairs half a cycle apart, like a trotting animal.
-- **Three joints per leg:** the first joint swings the finger forward and back, the second lifts and pushes down, and the third adds a smaller secondary flex. Each runs a sine wave at a different phase.
-- **Easy to tune:** stride speed, amplitude and phase offsets are plain constants at the top of the gait code, so you can experiment with your own gaits.
+> ⚠️ **Watch it closely.** The crawl runs open-loop, with no sensor feedback. Small plastic-gear servos can overheat under sustained load, so keep an eye on them and keep your hand near the power switch.
 
-> ⚠️ **Watch it closely.** The gait runs open-loop, with no sensor feedback. Small plastic-gear servos can overheat under sustained load, so keep an eye on them and keep your hand near the power switch.
-
-### ▶️ Try it
+### Try it
 
 ```bash
 python send_gestures_to_hardware.py
-# then type 4 and press Enter to start the crawl gait
-# press Enter again to stop it
+# then type 4 and press Enter to start the crawl
+# press Ctrl+C to stop it
 ```
 
 ---
 
-## ⚖️ Weight
+## Weight
 
 The complete hand weighs **204 g**.
 
-Because the hand is direct-driven, every servo sits inside the fingers and palm. That makes weight important for mounting it on an arm and for how much load the crawl gait puts on the fingertip servos.
+Because the hand is direct-driven, every servo sits inside the fingers and palm. That makes weight important for mounting it on an arm and for how much load the crawl puts on the fingertip servos.
 
 ---
 
-## 🧭 Two Simulation Models
+## Two Simulation Models
 
 The hand comes with two MuJoCo models, depending on what you want to do:
 
@@ -123,7 +119,7 @@ The hand comes with two MuJoCo models, depending on what you want to do:
 | `robothandassembly_fixed.xml` | **Upright** (fixed in place) | Gestures: fist, peace, spread and more |
 | `robothandassembly_crawl.xml` | **Facing the floor** (free-moving, with a ground plane) | Crawling and walking experiments |
 
-## 📦 What's in this repo
+## What's in this repo
 
 | Item | Description |
 |---|---|
@@ -131,17 +127,24 @@ The hand comes with two MuJoCo models, depending on what you want to do:
 | `robothandassembly_fixed.xml` | Simulation model, **upright hand** (gestures) |
 | `robothandassembly_crawl.xml` | Simulation model, **hand facing the floor** (crawling) |
 | `gesture_presets.py` | View and tune gestures in simulation |
-| `send_gestures_to_hardware.py` | Send gestures and the trot gait to the real hand |
+| `send_gestures_to_hardware.py` | Send gestures and the crawl to the real hand |
 | `pca9685_servo_bridge/` | Microcontroller firmware for driving the servos |
-| `hand_env.py`, `train_ppo.py`, `watch_policy.py`, `run_policy_on_hardware.py`, `sanity_check_model.py` | *Experimental:* reinforcement-learning work on the crawl model. Not used by the trot gait above. |
 
 ---
 
-## 🔮 Future Improvements
+## Future Improvements
 
-This project is still growing. Planned upgrades will be added to this repo as they are built.
+This project is still growing. Planned updates will be added to this repo as they are built.
 
-### 📡 Live joint position feedback
+### Detailed assembly instructions
+
+Step-by-step assembly instructions will be added, so that anyone can build the hand from the BOM without guessing. They are planned to cover:
+
+- Assembling the fingers and palm
+- Wiring the servos to the driver board
+- Flashing the firmware and running the control software for the first time
+
+### Live joint position feedback
 
 Right now the hand runs **open-loop**: commands go out to the servos, but nothing reads back where the joints actually are. The plan is to read each servo's **internal potentiometer**, and to add an **I²C multiplexer** so that all 16 joints can be read over a single bus.
 
@@ -149,12 +152,13 @@ This would allow:
 
 - **Live joint positions** streamed to the control software
 - **Closed-loop control**, so the hand can check that it reached the pose it was told to reach
-- **A safer crawl gait**, since the gait could react to what the joints are really doing instead of running blind
+- **A safer crawl**, since the hand could react to what the joints are really doing instead of running blind
 
-**Roadmap**
+### Roadmap
 
+- [ ] Write detailed step-by-step assembly instructions
 - [ ] Read the internal potentiometer of each servo
 - [ ] Add an I²C multiplexer so all 16 joints can be read over one bus
 - [ ] Stream live joint positions to the control software
-- [ ] Use the feedback for closed-loop control, including the crawl gait
+- [ ] Use the feedback for closed-loop control, including the crawl
 - [ ] Update the BOM, firmware and instructions for the new parts
