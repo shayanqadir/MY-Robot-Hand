@@ -127,7 +127,6 @@ The hand comes with two MuJoCo models, depending on what you want to do:
 | [`BOM MY Robot Hand.csv`](BOM%20MY%20Robot%20Hand.csv) | Full parts list with purchase links |
 | `robothandassembly_fixed.xml` | Simulation model, **upright hand** (gestures) |
 | `robothandassembly_crawl.xml` | Simulation model, **hand facing the floor** (crawling) |
-| `gesture_presets.py` | View and tune gestures in simulation |
 | `send_gestures_to_hardware.py` | Send gestures and the crawl to the real hand |
 | `pca9685_servo_bridge/` | Microcontroller firmware for driving the servos |
 | `LICENSE` | License for the software |
