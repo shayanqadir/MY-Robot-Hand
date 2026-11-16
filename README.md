@@ -1,4 +1,4 @@
-<h1 align="center">MY Robo Hand</h1>
+<h1 align="center">16 DOF Robot Hand</h1>
 
 <h3 align="center">
   A robot hand <b>YOU</b> can build at home for less than <b>200 Euros</b>
